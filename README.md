@@ -110,7 +110,7 @@ docker-wordpress-mariadb-1  | [Note] [Entrypoint]: Creating user wordpress_datab
 ```
 
 ### Visit your WordPress site
-Just got to [https://wordpress.dev.test/](https://wordpress.dev.test/).
+Just go to [https://wordpress.dev.test/](https://wordpress.dev.test/) in your browser. You should see the WordPress install wizard.
 
 The credentials are set in `docker-compose.dev.yml`. By default they are:
 * **Database Name**: wordpress
