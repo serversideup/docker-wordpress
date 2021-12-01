@@ -1,0 +1,9 @@
+blank_issues_enabled: false
+contact_links:
+  - name: ❓ Support Question
+    url: https://community.serversideup.net/c/get-help/22
+    about: Get friendly support from the community on our forum.
+
+  - name: 🤵 Get Professional Support & Customizations
+    url: https://serversideup.net/get-help/
+    about: Skip the line and get priority support directly from the creators of Server Side Up.

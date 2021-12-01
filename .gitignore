@@ -1,0 +1,43 @@
+#Ignore specific files
+.DS_Store
+.sass-cache
+node_modules
+
+# Ignore everything in the root except the "public" directory.
+/*
+!.gitignore
+!Jenkinsfile
+!README.md
+!docker-compose.*
+!Dockerfile
+!LICENSE
+!.gitlab-ci.yml
+!/public
+!/.github
+!/_volumes
+
+# Ignore the _volumes folder, except certain Traefik configs
+/_volumes/*
+!/_volumes/traefik
+
+
+#Ignore everything in public except "wp-content" directory.
+public/*
+!public/wp-content/
+
+# Ignore everything in the "wp-content" directory, except the "plugins"
+# and "themes" directories.
+public/wp-content/*
+!public/wp-content/plugins/
+!public/wp-content/themes/
+
+# Ignore everything in the "plugins" directory, except the plugins you
+# specify (see the commented-out examples for hints on how to do this.)
+# !wp-content/plugins/my-single-file-plugin.php
+public/wp-content/plugins/*
+!public/wp-content/plugins/my-custom-plugin/
+
+# Ignore everything in the "themes" directory, except the themes you
+# specify (see the commented-out example for a hint on how to do this.)
+public/wp-content/themes/*
+!public/wp-content/themes/my-custom-theme/

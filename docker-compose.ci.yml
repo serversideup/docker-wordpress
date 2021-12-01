@@ -1,0 +1,20 @@
+version: '3.7'
+services:
+  php:
+    volumes:
+      - .:/var/www/html/
+    environment:
+      CI_ENV: "true"
+    networks:
+      - web-ci
+
+  node:
+    image: node:lts
+    volumes:
+      - .:/usr/src/app/
+    working_dir: /usr/src/app/
+    networks: 
+      - web-ci
+
+networks:
+  web-ci:

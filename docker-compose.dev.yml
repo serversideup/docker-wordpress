@@ -1,0 +1,71 @@
+version: '3.7'
+services:
+
+  traefik:
+    networks:
+      - web-dev
+    ports:
+      # Listen on port 80, default for HTTP, necessary to redirect to HTTPS
+      - target: 80
+        published: 80
+        mode: host
+      # Listen on port 443, default for HTTPS
+      - target: 443
+        published: 443
+        mode: host
+      - target: 8080
+        published: 8080
+        mode: host
+    volumes:
+      # Add Docker as a mounted volume, so that Traefik can read the labels of other services
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - ./_volumes/traefik/traefik.yml:/traefik.yml:ro
+      - ./_volumes/traefik/traefik-certs.yml:/traefik-certs.yml
+      - ./_volumes/traefik/certificates/:/certificates
+
+  php:
+    volumes:
+      - .:/var/www/html/
+    networks:
+      - web-dev
+    ####################################
+    # Local development config
+    ####################################
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.wordpress.rule=HostRegexp(`wordpress.dev.test`)"
+      - "traefik.http.routers.wordpress.entrypoints=websecure"
+      - "traefik.http.routers.wordpress.tls=true"
+      - "traefik.http.services.wordpress.loadbalancer.server.port=443"
+      - "traefik.http.services.wordpress.loadbalancer.server.scheme=https"
+
+  mariadb:
+    hostname: "wordpress_mariadb"
+    networks:
+      - web-dev
+    environment:
+        MYSQL_ROOT_PASSWORD: "rootpassword"
+        MARIADB_DATABASE: "wordpress"
+        MARIADB_USER: "wordpress_database_user"
+        MARIADB_PASSWORD: "wordpress_database_password"
+    volumes:
+      # Add volume for all database files
+      - ./_volumes/mysql/database_data/:/var/lib/mysql
+      # Add volume for custom configurations
+      - ./_volumes/mysql/conf.d/:/etc/mysql/conf.d
+      - ./_volumes/mysql/docker-entrypoint-initdb.d/:/docker-entrypoint-initdb.d
+    ports:
+      - target: 3306
+        published: 3306
+        mode: host
+
+  node:
+    image: node:lts
+    volumes:
+      - .:/usr/src/app/
+    working_dir: /usr/src/app/
+    networks: 
+      - web-dev
+
+networks:
+  web-dev:

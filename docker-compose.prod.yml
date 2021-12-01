@@ -1,0 +1,31 @@
+version: '3.7'
+services:
+  php:
+    networks:
+      - web-public
+    volumes:
+      - "webroot:/var/www/html/"
+    environment:
+      APACHE_DOCUMENT_ROOT: "/var/www/html/public/"
+      PHP_POOL_NAME: "${CI_PROJECT_NAME}-${CI_ENVIRONMENT_SLUG}"
+    deploy:
+      replicas: 1
+      update_config:
+        parallelism: 1
+        delay: 5s
+        order: start-first
+      labels:
+        - "traefik.enable=true"
+        - "traefik.http.routers.${CI_PROJECT_NAME}-${CI_ENVIRONMENT_SLUG}.rule=${TRAEFIK_HOST_RULE}"
+        - "traefik.http.routers.${CI_PROJECT_NAME}-${CI_ENVIRONMENT_SLUG}.entrypoints=websecure"
+        - "traefik.http.routers.${CI_PROJECT_NAME}-${CI_ENVIRONMENT_SLUG}.tls=true"
+        - "traefik.http.routers.${CI_PROJECT_NAME}-${CI_ENVIRONMENT_SLUG}.tls.certresolver=letsencryptresolver"
+        - "traefik.http.services.${CI_PROJECT_NAME}-${CI_ENVIRONMENT_SLUG}.loadbalancer.server.port=443"
+        - "traefik.http.services.${CI_PROJECT_NAME}-${CI_ENVIRONMENT_SLUG}.loadbalancer.server.scheme=https"
+
+volumes:
+  webroot:
+
+networks:
+  web-public:
+    external: true

@@ -1,0 +1,12 @@
+version: '3.7'
+services:
+  traefik:
+    image: traefik:v2.4
+
+  php:
+    image: serversideup/php:8.0-fpm-apache
+    environment:
+      APACHE_DOCUMENT_ROOT: "/var/www/html/public/"
+  
+  mariadb:
+    image: mariadb:10.5
