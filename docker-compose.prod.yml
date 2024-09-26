@@ -1,31 +1,125 @@
-version: '3.7'
 services:
-  php:
+  traefik:
+    ports:
+      - target: 80
+        published: 80
+        protocol: tcp
+        mode: host
+      - target: 443
+        published: 443
+        protocol: tcp
+        mode: host
     networks:
       - web-public
-    volumes:
-      - "webroot:/var/www/html/"
-    environment:
-      APACHE_DOCUMENT_ROOT: "/var/www/html/public/"
-      PHP_POOL_NAME: "${CI_PROJECT_NAME}-${CI_ENVIRONMENT_SLUG}"
     deploy:
-      replicas: 1
       update_config:
         parallelism: 1
         delay: 5s
+        order: stop-first
+      placement:
+        constraints:
+          - node.role==manager
+    volumes:
+      # Mount the Docker socket as read-only so Traefik can listen to events
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - certificates:/certificates
+    configs:
+      - source: traefik
+        target: /etc/traefik/traefik.yml
+
+  php:
+    environment:
+      PHP_OPCACHE_ENABLE: "1"
+    networks:
+      - web-public
+    volumes:
+      - "storage_private:/var/www/html/storage/app/private/"
+      - "storage_public:/var/www/html/storage/app/public/"
+      - "storage_sessions:/var/www/html/storage/framework/sessions"
+      - "storage_logs:/var/www/html/storage/logs"
+    deploy:
+      replicas: 1
+      update_config:
+        failure_action: rollback
+        parallelism: 1
+        delay: 5s
         order: start-first
+      rollback_config:
+        parallelism: 0
+        order: stop-first
+      restart_policy:
+        condition: any
+        delay: 10s
+        max_attempts: 3
+        window: 120s
       labels:
         - "traefik.enable=true"
-        - "traefik.http.routers.${CI_PROJECT_NAME}-${CI_ENVIRONMENT_SLUG}.rule=${TRAEFIK_HOST_RULE}"
-        - "traefik.http.routers.${CI_PROJECT_NAME}-${CI_ENVIRONMENT_SLUG}.entrypoints=websecure"
-        - "traefik.http.routers.${CI_PROJECT_NAME}-${CI_ENVIRONMENT_SLUG}.tls=true"
-        - "traefik.http.routers.${CI_PROJECT_NAME}-${CI_ENVIRONMENT_SLUG}.tls.certresolver=letsencryptresolver"
-        - "traefik.http.services.${CI_PROJECT_NAME}-${CI_ENVIRONMENT_SLUG}.loadbalancer.server.port=443"
-        - "traefik.http.services.${CI_PROJECT_NAME}-${CI_ENVIRONMENT_SLUG}.loadbalancer.server.scheme=https"
+        - "traefik.http.routers.laravel-web.rule=Host(`${SPIN_APP_DOMAIN}`)"
+        - "traefik.http.routers.laravel-web.entrypoints=websecure"
+        - "traefik.http.routers.laravel-web.tls=true"
+        - "traefik.http.routers.laravel-web.tls.certresolver=letsencryptresolver"
+        - "traefik.http.services.laravel-web.loadbalancer.server.port=8080"
+        - "traefik.http.services.laravel-web.loadbalancer.server.scheme=http"
+        # Health check
+        - "traefik.http.services.laravel-web.loadbalancer.healthcheck.path=/healthcheck"
+        - "traefik.http.services.laravel-web.loadbalancer.healthcheck.interval=30s"
+        - "traefik.http.services.laravel-web.loadbalancer.healthcheck.timeout=5s"
+        - "traefik.http.services.laravel-web.loadbalancer.healthcheck.scheme=http"
 
+  mariadb:
+    networks:
+      - web-public
+    environment:
+      MARIADB_RANDOM_ROOT_PASSWORD: "1"
+      MARIADB_DATABASE: "${DB_DATABASE}"
+      MARIADB_USER: "${DB_USERNAME}"
+      MARIADB_PASSWORD: "${DB_PASSWORD}"
+    deploy:
+      placement:
+        constraints:
+          - node.role==manager
+    volumes:
+      - mariadb_data:/var/lib/mysql
+      - mariadb_custom_conf:/etc/mysql/conf.d
+      - mariadb_shared:/shared
+
+  ssh:
+    # We use an SSH image so we can securely tunnel into the Docker network with 
+    # tools like Sequel Pro, TablePlus, Sequel Ace, etc.
+    # Learn more how to secure your tunnel here: https://github.com/serversideup/docker-ssh
+    image: serversideup/docker-ssh:v2.0.0
+    ports:
+      - target: 2222
+        published: 2222
+        mode: host
+    environment:
+      # Change the keys below to your own keys 
+      AUTHORIZED_KEYS: >
+        "# Start Keys
+         ssh-ed25519 1234567890abcdefghijklmnoqrstuvwxyz user-a
+         ssh-ed25519 abcdefghijklmnoqrstuvwxyz1234567890 user-b
+         # End Keys"
+      # You can lock to a specific IP too (AllowUsers tunnel@1.2.3.4)
+      ALLOWED_IPS: "AllowUsers tunnel"
+    volumes:
+      - tunnel_ssh_host_keys:/etc/ssh/ssh_host_keys
+    networks:
+      - web-public
+
+configs:
+  traefik:
+    name: "traefik-${SPIN_MD5_HASH_TRAEFIK_YML}.yml"
+    file: ./.infrastructure/conf/traefik/prod/traefik.yml
+    
 volumes:
-  webroot:
-
+  certificates:
+  storage_private:
+  storage_public:
+  storage_sessions:
+  storage_logs:
+  mariadb_data:
+  mariadb_custom_conf:
+  mariadb_shared:
+  tunnel_ssh_host_keys:
 networks:
   web-public:
-    external: true

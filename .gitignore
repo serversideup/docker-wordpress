@@ -14,12 +14,7 @@ node_modules
 !.gitlab-ci.yml
 !/public
 !/.github
-!/_volumes
-
-# Ignore the _volumes folder, except certain Traefik configs
-/_volumes/*
-!/_volumes/traefik
-
+!/.infrastructure
 
 #Ignore everything in public except "wp-content" directory.
 public/*
@@ -41,3 +36,6 @@ public/wp-content/plugins/*
 # specify (see the commented-out example for a hint on how to do this.)
 public/wp-content/themes/*
 !public/wp-content/themes/my-custom-theme/
+
+# Ignore Vault password
+.vault-password

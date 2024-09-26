@@ -9,24 +9,6 @@
   <a href="https://serversideup.net/discord"><img alt="Discord" src="https://img.shields.io/discord/910287105714954251?color=blueviolet"></a>
 </p>
 
-Hi! We're [Dan](https://twitter.com/danpastori) and [Jay](https://twitter.com/jaydrogers). We're a two person team with a passion for open source products. We created [Server Side Up](https://serversideup.net) to help share what we learn.
-
-### Find us at:
-
-* 📖 [Blog](https://serversideup.net) - get the latest guides and free courses on all things web/mobile development.
-* 🙋 [Community](https://community.serversideup.net) - get friendly help from our community members.
-* 🤵‍♂️ [Get Professional Help](https://serversideup.net/get-help) - get guaranteed responses within next business day.
-* 💻 [GitHub](https://github.com/serversideup) - check out our other open source projects
-* 📫 [Newsletter](https://serversideup.net/subscribe) - skip the algorithms and get quality content right to your inbox
-* 🐥 [Twitter](https://twitter.com/serversideup) - you can also follow [Dan](https://twitter.com/danpastori) and [Jay](https://twitter.com/jaydrogers)
-* ❤️ [Sponsor Us](https://github.com/sponsors/serversideup) - please consider sponsoring us so we can create more helpful resources
-
-### Our Sponsors
-All of our software is free an open to the world. None of this can be brought to you without the financial backing of our sponsors.
-<p align="center">
-		<a href="https://github.com/sponsors/serversideup"><img src="https://serversideup.net/wp-content/themes/serversideup/images/sponsor-empty-state.png" alt="Sponsors"></a>
-</p>
-
 # Running WordPress on Docker
 Ready to take the dive and modernize WordPress with Docker?
 
@@ -54,7 +36,7 @@ We've tried all of these above and we learned that most of the plugins that we r
 We embrace these principals:
 1. Always do things "The WordPress Way"
 1. Keep plugin installation to a minimum
-1. Always use Apache as the webserver
+1. Always use Apache as the web server (too many plugins expect Apache)
 1. Only commit _your own_ source code (not WordPress core or another plugin)
 
 ### The structure
@@ -116,7 +98,7 @@ The credentials are set in `docker-compose.dev.yml`. By default they are:
 * **Database Name**: wordpress
 * **Database Username**: wordpress_database_user
 * **Database Password**: wordpress_database_password
-* **Database Host**: wordpress_mariadb
+* **Database Host**: mariadb (the name of the mariadb service in the docker-compose.yml file)
 
 # Running WordPress in production
 We use Docker Swarm for running WordPress in production (just because it is so much simpler than Kubernetes).I  left our `docker-compose.prod.yml` file in there, but there are a number of things that we do in production that would take longer than writing this document 😅
@@ -126,3 +108,40 @@ If there is interest on how we do this, just let us know. [Hit me up on Twitter]
 For this first commit, I  just wanted to at least give you a perspective on how we run things.
 
 As always, if you know of a better way, let us know!!
+
+## About Us
+We're [Dan](https://twitter.com/danpastori) and [Jay](https://twitter.com/jaydrogers) - a two person team with a passion for open source products. We created [Server Side Up](https://serversideup.net) to help share what we learn.
+
+<div align="center">
+
+| <div align="center">Dan Pastori</div>                  | <div align="center">Jay Rogers</div>                                 |
+| ----------------------------- | ------------------------------------------ |
+| <div align="center"><a href="https://twitter.com/danpastori"><img src="https://serversideup.net/wp-content/uploads/2023/08/dan.jpg" title="Dan Pastori" width="150px"></a><br /><a href="https://twitter.com/danpastori"><img src="https://serversideup.net/wp-content/themes/serversideup/images/open-source/twitter.svg" title="Twitter" width="24px"></a><a href="https://github.com/danpastori"><img src="https://serversideup.net/wp-content/themes/serversideup/images/open-source/github.svg" title="GitHub" width="24px"></a></div>                        | <div align="center"><a href="https://twitter.com/jaydrogers"><img src="https://serversideup.net/wp-content/uploads/2023/08/jay.jpg" title="Jay Rogers" width="150px"></a><br /><a href="https://twitter.com/jaydrogers"><img src="https://serversideup.net/wp-content/themes/serversideup/images/open-source/twitter.svg" title="Twitter" width="24px"></a><a href="https://github.com/jaydrogers"><img src="https://serversideup.net/wp-content/themes/serversideup/images/open-source/github.svg" title="GitHub" width="24px"></a></div>                                       |
+
+</div>
+
+### Find us at:
+
+* **📖 [Blog](https://serversideup.net)** - Get the latest guides and free courses on all things web/mobile development.
+* **🙋 [Community](https://community.serversideup.net)** - Get friendly help from our community members.
+* **🤵‍♂️ [Get Professional Help](https://serversideup.net/professional-support)** - Get video + screen-sharing support from the core contributors.
+* **💻 [GitHub](https://github.com/serversideup)** - Check out our other open source projects.
+* **📫 [Newsletter](https://serversideup.net/subscribe)** - Skip the algorithms and get quality content right to your inbox.
+* **🐥 [Twitter](https://twitter.com/serversideup)** - You can also follow [Dan](https://twitter.com/danpastori) and [Jay](https://twitter.com/jaydrogers).
+* **❤️ [Sponsor Us](https://github.com/sponsors/serversideup)** - Please consider sponsoring us so we can create more helpful resources.
+
+## Our products
+If you appreciate this project, be sure to check out our other projects.
+
+### 📚 Books
+- **[The Ultimate Guide to Building APIs & SPAs](https://serversideup.net/ultimate-guide-to-building-apis-and-spas-with-laravel-and-nuxt3/)**: Build web & mobile apps from the same codebase.
+- **[Building Multi-Platform Browser Extensions](https://serversideup.net/building-multi-platform-browser-extensions/)**: Ship extensions to all browsers from the same codebase.
+
+### 🛠️ Software-as-a-Service
+- **[Bugflow](https://bugflow.io/)**: Get visual bug reports directly in GitHub, GitLab, and more.
+- **[SelfHost Pro](https://selfhostpro.com/)**: Connect Stripe or Lemonsqueezy to a private docker registry for self-hosted apps.
+
+### 🌍 Open Source
+- **[AmplitudeJS](https://521dimensions.com/open-source/amplitudejs)**: Open-source HTML5 & JavaScript Web Audio Library.
+- **[Spin](https://serversideup.net/open-source/spin/)**: Laravel Sail alternative for running Docker from development → production.
+- **[Financial Freedom](https://github.com/serversideup/financial-freedom)**: Open source alternative to Mint, YNAB, & Monarch Money.
